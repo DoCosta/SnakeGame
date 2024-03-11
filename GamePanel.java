@@ -114,6 +114,20 @@ public class GamePanel extends JPanel implements ActionListener{
             newApple();
         }
     }
+    public void autocompletion(){
+        
+        // make the snake automaticly turn before it hits a wall
+            if(x[0] == 0){
+                direction = 'U';
+            } if(x[0] == SCREEN_WIDTH - UNIT_SIZE){
+                direction = 'D';
+            } if(y[0] == 0){
+                direction = 'R';
+            } if((y[0] == SCREEN_HEIGHT - UNIT_SIZE) || ((direction = 'D') && (y[0] == y[0] + UNIT_SIZE))){
+                direction = 'L';    
+            }
+        
+    }
 
     public void checkCollisions(){
         for(int i = bodyParts; i > 0; i--){
@@ -130,30 +144,7 @@ public class GamePanel extends JPanel implements ActionListener{
         }
         if(!running){
             timer.stop();
-        }
-        for(int K = 0;  K <= SCREEN_HEIGHT/UNIT_SIZE; K++){
-            if(autocomplete == true){
-                
-                // y[0] -= UNIT_SIZE;
-                // y[0] += UNIT_SIZE;
-                // x[0] -= UNIT_SIZE;
-                // x[0] += UNIT_SIZE;
-                
-                /* if (x[0] <= UNIT_SIZE + K){
-                    direction = 'U';
-                } 
-                if (y[0] <= UNIT_SIZE+ K){
-                    direction = 'R';
-                }
-                if (x[0] >= SCREEN_WIDTH - UNIT_SIZE - K){
-                    direction = 'D';
-                }
-                if (y[0] >= SCREEN_HEIGHT - UNIT_SIZE - K){
-                    direction = 'L';
-                } */
-            }
-        }
-        
+        }        
     }
 
     public void GameOver(Graphics g){
@@ -179,6 +170,7 @@ public class GamePanel extends JPanel implements ActionListener{
             move();
             checkapple();
             checkCollisions();
+            autocompletion();
         }
         repaint();
     }
