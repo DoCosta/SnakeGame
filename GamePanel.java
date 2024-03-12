@@ -1,5 +1,7 @@
 package SnakeGame;
 import java.awt.*;
+
+import javax.lang.model.type.UnionType;
 import javax.swing.*;
 
 import java.awt.event.ActionListener;
@@ -7,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.ActionEvent;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 
 public class GamePanel extends JPanel implements ActionListener{
@@ -24,7 +25,7 @@ public class GamePanel extends JPanel implements ActionListener{
     int applesEaten;
     int appleX;
     int appleY;
-    boolean autocomplete = true;
+    boolean autocomplete = false;
     char direction = 'R';
     boolean running = false;
     Timer timer;
@@ -46,8 +47,8 @@ public class GamePanel extends JPanel implements ActionListener{
         running = true;
         timer = new Timer(DELAY, this);
         timer.start();
-        x[0] = SCREEN_WIDTH / 2;
-        y[0] = SCREEN_HEIGHT / 2;
+        x[0] = 0 + UNIT_SIZE;
+        y[0] = 0 + UNIT_SIZE;
     }
 
     public void paintComponent(Graphics g){
@@ -98,13 +99,14 @@ public class GamePanel extends JPanel implements ActionListener{
 
         if (direction == 'U') {
             y[0] -= UNIT_SIZE;
-        } if (direction == 'D') {
-            y[0] += UNIT_SIZE;
         } if (direction == 'L') {
             x[0] -= UNIT_SIZE;  
-        } if (direction == 'R') {
+        } if (direction == 'D') {
+            y[0] += UNIT_SIZE;
+        }  if (direction == 'R') {
             x[0] += UNIT_SIZE;
         }
+
     }
 
     public void checkapple(){
@@ -115,17 +117,22 @@ public class GamePanel extends JPanel implements ActionListener{
         }
     }
     public void autocompletion(){
-        
-        // make the snake automaticly turn before it hits a wall
-            if(x[0] == 0){
-                direction = 'U';
-            } if(x[0] == SCREEN_WIDTH - UNIT_SIZE){
+        int prevX = x[0];
+        int prevY = y[0];
+        for(int K = 1100; K >= SCREEN_WIDTH*SCREEN_HEIGHT; K--){
+             if(x[0] == SCREEN_WIDTH - K && direction != 'D'){
+                prevY = y[0];
                 direction = 'D';
-            } if(y[0] == 0){
-                direction = 'R';
-            } if((y[0] == SCREEN_HEIGHT - UNIT_SIZE) || ((direction = 'D') && (y[0] == y[0] + UNIT_SIZE))){
+            }if((y[0] == SCREEN_HEIGHT - K ) || (direction == 'D' && (y[0] != prevY)) && direction != 'L'){
                 direction = 'L';    
-            }
+            }if(x[0] == 0 + K && direction != 'U'){
+                direction = 'U';
+            }if(y[0] == 0 + K && direction != 'R'){
+                direction = 'R';
+            } 
+            
+        } 
+            
         
     }
 
@@ -169,8 +176,10 @@ public class GamePanel extends JPanel implements ActionListener{
         if(running){
             move();
             checkapple();
+            if(autocomplete){
+                autocompletion();
+            }
             checkCollisions();
-            autocompletion();
         }
         repaint();
     }
